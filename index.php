@@ -182,16 +182,98 @@ echo '</div>';
                     move = await this.moveTower()
                     break
                 case 'bishop':
-                    move = await this.moveTower()
+                    move = await this.moveBishop()
+                    break
+                case 'queen':
+                    move = await this.moveQueen()
                     break
             }
             return move
+        }
+
+        async moveBishop() {
+            await this.setMovementZ()
+            return this.arrayOptions
+        }
+
+        async moveQueen() {
+            await this.setMovementY()
+            await this.setMovementX()
+            await this.setMovementZ()
+            return this.arrayOptions
         }
 
         async moveTower() {
             await this.setMovementY()
             await this.setMovementX()
             return this.arrayOptions
+        }
+
+        setMovementZ() {
+            this.$directions.z.pos1.val = this.$X
+            this.$directions.z.pos1.max = []
+            this.$directions.z.pos2.val = this.$X
+            this.$directions.z.pos2.max = []
+            this.$directions.z.pos3.val = this.$X
+            this.$directions.z.pos3.max = []
+            this.$directions.z.pos4.val = this.$X
+            this.$directions.z.pos4.max = []
+
+            for(let $i=(this.$Y-1);$i>=0;$i--){
+                const item = this.$table.childNodes.item($i)
+                if(this.$directions.z.pos1.val > 0 && !this.$directions.z.pos1.max.length){
+                    this.$directions.z.pos1.val =  parseInt(this.$directions.z.pos1.val) - 1
+                    const pos1 = item.childNodes.item(this.$directions.z.pos1.val)
+                    if(pos1.childNodes.length){
+                        this.$directions.z.pos1.max.push([this.$directions.z.pos1.val, $i])
+                        this.checkAttack(this.$directions.z.pos1.max)
+                    }else{
+                        if(!this.$directions.z.pos1.max.length){
+                            this.setOption([this.$directions.z.pos1.val, $i])
+                        }
+                    }
+                }
+                if(this.$directions.z.pos2.val < 7 && !this.$directions.z.pos2.max.length){
+                    this.$directions.z.pos2.val =  parseInt(this.$directions.z.pos2.val) + 1
+                    const pos2 = item.childNodes.item(this.$directions.z.pos2.val)
+                    if(pos2.childNodes.length){
+                        this.$directions.z.pos2.max.push([this.$directions.z.pos2.val, $i])
+                        //console.log(this.$directions.z.pos2.max)
+                        this.checkAttack(this.$directions.z.pos2.max)
+                    }else{
+                        this.setOption([this.$directions.z.pos2.val, $i])
+                    }
+                }
+            }
+            for(let $i=(this.$Y+1);$i<=7;$i++){
+                const item = this.$table.childNodes.item($i)
+                if(this.$directions.z.pos3.val > 0 && !this.$directions.z.pos3.max.length){
+                    this.$directions.z.pos3.val =  parseInt(this.$directions.z.pos3.val) - 1
+                    const pos3 = item.childNodes.item(this.$directions.z.pos3.val)
+                    if(pos3.childNodes.length){
+                        this.$directions.z.pos3.max.push([this.$directions.z.pos3.val, $i])
+                        this.checkAttack(this.$directions.z.pos3.max)
+                    }else{
+                        if(!this.$directions.z.pos3.max.length){
+                            this.setOption([this.$directions.z.pos3.val, $i])
+                        }
+                    }
+                }
+                if(this.$directions.z.pos4.val < 7 && !this.$directions.z.pos4.max.length){
+                    this.$directions.z.pos4.val =  parseInt(this.$directions.z.pos4.val) + 1
+                    const pos4 = item.childNodes.item(this.$directions.z.pos4.val)
+                    if(pos4.childNodes.length){
+                        this.$directions.z.pos4.max.push([this.$directions.z.pos4.val, $i])
+                        //console.log(this.$directions.z.pos4.max)
+                        this.checkAttack(this.$directions.z.pos4.max)
+                    }else{
+                        this.setOption([this.$directions.z.pos4.val, $i])
+                    }
+                }
+            
+            }
+            return this.arrayOptions
+
         }
 
         setMovementX() {
@@ -342,12 +424,16 @@ echo '</div>';
         }
 
         checkAttack(arrayCheck){
+            let callback = false
             arrayCheck.forEach((item) => {
                 let elem = this.$table.children.item(item[1]).children.item(item[0])
+                //console.log(elem)
                 if(elem.childNodes.length && elem.children.item(0).getAttribute('data-player') !== this.$PlayerActive.toString()){
                     this.setOption([item[0], item[1], 'attack'])
+                    callback = true
                 }
             })
+            return callback
         }
 
         setOption(option){
@@ -367,6 +453,24 @@ echo '</div>';
                 'x' : {
                     'min' : [],
                     'max' : []
+                },
+                'z' : {
+                    'pos1' : {
+                        'val' : 0,
+                        'max' : []
+                    },
+                    'pos2' : {
+                        'val' : 0,
+                        'max' : []
+                    },
+                    'pos3' : {
+                        'val' : 0,
+                        'max' : []
+                    },
+                    'pos4' : {
+                        'val' : 0,
+                        'max' : []
+                    }
                 }
             }
         }
