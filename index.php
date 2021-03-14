@@ -221,6 +221,7 @@ echo '</div>';
 
             for(let $i=(this.$Y-1);$i>=0;$i--){
                 const item = this.$table.childNodes.item($i)
+                //top left
                 if(this.$directions.z.pos1.val > 0 && !this.$directions.z.pos1.max.length){
                     this.$directions.z.pos1.val =  parseInt(this.$directions.z.pos1.val) - 1
                     const pos1 = item.childNodes.item(this.$directions.z.pos1.val)
@@ -233,6 +234,7 @@ echo '</div>';
                         }
                     }
                 }
+                //top right
                 if(this.$directions.z.pos2.val < 7 && !this.$directions.z.pos2.max.length){
                     this.$directions.z.pos2.val =  parseInt(this.$directions.z.pos2.val) + 1
                     const pos2 = item.childNodes.item(this.$directions.z.pos2.val)
@@ -247,6 +249,7 @@ echo '</div>';
             }
             for(let $i=(this.$Y+1);$i<=7;$i++){
                 const item = this.$table.childNodes.item($i)
+                //bottom left
                 if(this.$directions.z.pos3.val > 0 && !this.$directions.z.pos3.max.length){
                     this.$directions.z.pos3.val =  parseInt(this.$directions.z.pos3.val) - 1
                     const pos3 = item.childNodes.item(this.$directions.z.pos3.val)
@@ -259,6 +262,7 @@ echo '</div>';
                         }
                     }
                 }
+                //bottom right
                 if(this.$directions.z.pos4.val < 7 && !this.$directions.z.pos4.max.length){
                     this.$directions.z.pos4.val =  parseInt(this.$directions.z.pos4.val) + 1
                     const pos4 = item.childNodes.item(this.$directions.z.pos4.val)
@@ -273,7 +277,6 @@ echo '</div>';
             
             }
             return this.arrayOptions
-
         }
 
         setMovementX() {
@@ -392,25 +395,30 @@ echo '</div>';
         }
 
         movePawn() {
-            let newY = false
-            this.$Target.getAttribute('data-player') === '1' ? newY = this.$Y + 1 : newY = this.$Y - 1
+            if(this.$Y === 0 || this.$Y === 7){ return false }
+            let nextY = 0
+            this.$Target.getAttribute('data-player') === '1' ? nextY = this.$Y + 1 : nextY = this.$Y - 1
+            const next = this.$table.children.item(nextY).children.item(this.$X)
 
-            const movementOptionEl = this.$table.children.item(newY).children
-            const movementOptionElement = movementOptionEl.item(this.$X)
+            let arrNext = []
+            arrNext.push(this.$X, nextY)
+            !next.childNodes.length ? this.setOption(arrNext) : null
 
-            let options = []
-            this.$table.children.item(parseInt(this.$Y)).childNodes.forEach((item, x) => {
-                if(x === (this.$X - 1) || x === (parseInt(this.$X) + 1)){
-                    options.push([x, newY, (item.children)])
+            if(this.$X !== 0){
+                const nextCheckAttach1 = this.$table.children.item(nextY).children.item(this.$X - 1)
+                if(nextCheckAttach1.childNodes.length){
+                    let checkAttack = []
+                    checkAttack.push([parseInt(this.$X - 1), nextY])
+                    this.checkAttack(checkAttack)
                 }
-            })
-            if(options.length){
-                this.checkAttack(options)
             }
-
-            if(!this.checkNextMovement(movementOptionElement)){
-                const positions = this.getPositions(movementOptionElement);
-                this.setOption([positions[0].toString(), positions[1]])
+            if(this.$X !== 7){
+                const nextCheckAttach2 = this.$table.children.item(nextY).children.item(this.$X + 1)
+                if(nextCheckAttach2.childNodes.length){
+                    let checkAttack = []
+                    checkAttack.push([parseInt(this.$X + 1), nextY])
+                    this.checkAttack(checkAttack)
+                }
             }
 
             return this.arrayOptions
@@ -425,6 +433,7 @@ echo '</div>';
 
         checkAttack(arrayCheck){
             let callback = false
+            console.log(arrayCheck)
             arrayCheck.forEach((item) => {
                 let elem = this.$table.children.item(item[1]).children.item(item[0])
                 //console.log(elem)
