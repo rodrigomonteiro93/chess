@@ -113,15 +113,16 @@ echo '</div>';
 <script>
 (async function (){
     class Chess {
-        newY;
+
         constructor() {
-            this.$Y = ''
-            this.$X = ''
+            this.$Y = false
+            this.$X = false
             this.arrayOptions = []
             this.$PlayerActive = Math.floor(Math.random() * 2 + 1)
-            this.$Target = ''
-            this.$winner = ''
-            this.$testing = true
+            this.$Target = false
+            this.$winner = false
+            this.$testing = false
+            this.$directions = this.createDirection()
             this.$table = document.querySelector('.table')
             this.items = document.querySelectorAll('.table div span i')
             this.items.forEach(item => {
@@ -151,11 +152,11 @@ echo '</div>';
                 if(item[2]){
                     elem.classList.add('attack')
                 }
-                elem.addEventListener('click', this.bindGoMovement.bind(this))
+                elem.addEventListener('click', this.bindMovement.bind(this))
             })
         }
 
-        bindGoMovement(e) {
+        bindMovement(e) {
             if (e.target.classList.contains('active')) {
                 this.checkPiece(e.target) ? this.endGame() : null
                 e.target.innerHTML = this.$Target.parentElement.innerHTML
@@ -180,25 +181,136 @@ echo '</div>';
                 case 'tower':
                     move = await this.moveTower()
                     break
+                case 'bishop':
+                    move = await this.moveTower()
+                    break
             }
             return move
         }
-        moveTower() {
 
-            this.$table.childNodes.forEach((itemY) => {
-                const y = itemY.childNodes.item(this.$X)
-                if(!y.childNodes.length){
-                    const positions = this.getPositions(y)
-                    //options.push([this.$X, positions[1], (y.children)])
-                    this.setOption([positions[0], positions[1]])
+        async moveTower() {
+            await this.setMovementY()
+            await this.setMovementX()
+            return this.arrayOptions
+        }
+
+        setMovementX() {
+            this.$directions.x.max = []
+            this.$directions.x.min = []
+            //search min e max
+            this.$table.childNodes.item(this.$Y).childNodes.forEach((itemX, index) => {
+                let positions = this.getPositions(itemX)
+                if(itemX.childNodes.length && index < this.$X){
+                    this.$directions.x.min = [positions[0], positions[1]]
+                }
+                if(itemX.childNodes.length && positions[0] > this.$X){
+                    !this.$directions.x.max.length ? this.$directions.x.max = [positions[0], positions[1]] : null
                 }
             })
+            //set default
+            if(!this.$directions.x.min.length){
+                this.$directions.x.min = [0, this.$Y]
+            }else{
+                let arrMin = []
+                arrMin.push([this.$directions.x.min[0], this.$directions.x.min[1]])
+                this.checkAttack(arrMin)
+            }
+            if(!this.$directions.x.max.length){
+                this.$directions.x.max = [7, this.$Y]
+            }else{
+                let arrMax = []
+                arrMax.push([this.$directions.x.max[0], this.$directions.x.max[1]])
+                this.checkAttack(arrMax)
+            }
+            //set positions X
+            this.$table.childNodes.item(this.$Y).childNodes.forEach((itemX, index) => {
+                let positions = this.getPositions(itemX)
+                //check prev(s)
+                if(index < this.$X && index >= this.$directions.x.min[0]){
+                    if(index === this.$directions.x.min[0]){
+                        if((itemX.childNodes.length && itemX.childNodes.item(0).getAttribute('data-player') !== this.$PlayerActive.toString()) || !itemX.childNodes.length){
+                            this.setOption([positions[0], positions[1]])
+                        }
+                    }else{
+                        this.setOption([positions[0], positions[1]])
+                    }
+                }
+                //check next(s)
+                if(index > this.$X && index <= this.$directions.x.max[0]){
+                    if(index === this.$directions.x.max[0]){
+                        if((itemX.childNodes.length && itemX.childNodes.item(0).getAttribute('data-player') !== this.$PlayerActive.toString()) || !itemX.childNodes.length){
+                            this.setOption([positions[0], positions[1]])
+                        }
+                    }else{
+                        this.setOption([positions[0], positions[1]])
+                    }
+                }
+            })
+        }
 
+        setMovementY(){
+            this.$directions.y.max = []
+            this.$directions.y.min = []
+            //search min e max
+            this.$table.childNodes.forEach((itemY, index) => {
+                let y = itemY.childNodes.item(this.$X)
+                let positions = this.getPositions(y)
+                if(y.childNodes.length && positions[1] < this.$Y){
+                    if(this.$PlayerActive === 1){
+                        this.$directions.y.min = [positions[0], positions[1]]
+                    }else{
+                        this.$directions.y.min = [positions[0], positions[1]]
+                    }
+                }
+                if(y.childNodes.length && positions[1] > this.$Y){
+                    !this.$directions.y.max.length ? this.$directions.y.max = [positions[0], positions[1]] : null
+                }
+            })
+            //set default
+            if(!this.$directions.y.min.length){
+                this.$directions.y.min = [this.$X, 0]
+            }else{
+                let arrMin = []
+                arrMin.push([this.$directions.y.min[0], this.$directions.y.min[1]])
+                this.checkAttack(arrMin)
+            }
+            if(!this.$directions.y.max.length){
+                this.$directions.y.max = [this.$X, 7]
+            }else{
+                let arrMax = []
+                arrMax.push([this.$directions.y.max[0], this.$directions.y.max[1]])
+                this.checkAttack(arrMax)
+            }
+            //set positions Y
+            this.$table.childNodes.forEach((item) => {
+                let y = item.childNodes.item(this.$X)
+                let positions = this.getPositions(y)
+                //check prev(s)
+                if(positions[1] < this.$Y && positions[1] >= this.$directions.y.min[1]){
+                    if(positions[1] === this.$directions.y.min[1]){
+                        if((y.childNodes.length && y.childNodes.item(0).getAttribute('data-player') !== this.$PlayerActive.toString()) || !y.childNodes.length){
+                            this.setOption([positions[0], positions[1]])
+                        }
+                    }else{
+                        this.setOption([positions[0], positions[1]])
+                    }
+                }
+                //check next(s)
+                if(positions[1] > this.$Y && positions[1] <= this.$directions.y.max[1]){
+                    if(positions[1] === this.$directions.y.max[1]){
+                        if((y.childNodes.length && y.childNodes.item(0).getAttribute('data-player') !== this.$PlayerActive.toString()) || !y.childNodes.length){
+                            this.setOption([positions[0], positions[1]])
+                        }
+                    }else{
+                        this.setOption([positions[0], positions[1]])
+                    }
+                }
+            })
             return this.arrayOptions
         }
 
         movePawn() {
-            let newY = ''
+            let newY = false
             this.$Target.getAttribute('data-player') === '1' ? newY = this.$Y + 1 : newY = this.$Y - 1
 
             const movementOptionEl = this.$table.children.item(newY).children
@@ -216,7 +328,7 @@ echo '</div>';
 
             if(!this.checkNextMovement(movementOptionElement)){
                 const positions = this.getPositions(movementOptionElement);
-                this.setOption([positions[0], positions[1]])
+                this.setOption([positions[0].toString(), positions[1]])
             }
 
             return this.arrayOptions
@@ -231,7 +343,7 @@ echo '</div>';
 
         checkAttack(arrayCheck){
             arrayCheck.forEach((item) => {
-                const elem = this.$table.children.item(item[1]).children.item(item[0])
+                let elem = this.$table.children.item(item[1]).children.item(item[0])
                 if(elem.childNodes.length && elem.children.item(0).getAttribute('data-player') !== this.$PlayerActive.toString()){
                     this.setOption([item[0], item[1], 'attack'])
                 }
@@ -245,6 +357,18 @@ echo '</div>';
 
         checkNextMovement(movementOptionElement){
             return (movementOptionElement.children.length)
+        }
+        createDirection(){
+            return {
+                'y' : {
+                    'min' : [],
+                    'max' : []
+                },
+                'x' : {
+                    'min' : [],
+                    'max' : []
+                }
+            }
         }
 
         clearActives(){
