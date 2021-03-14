@@ -396,27 +396,44 @@ echo '</div>';
 
         movePawn() {
             if(this.$Y === 0 || this.$Y === 7){ return false }
-            let nextY = 0
-            this.$Target.getAttribute('data-player') === '1' ? nextY = this.$Y + 1 : nextY = this.$Y - 1
-            const next = this.$table.children.item(nextY).children.item(this.$X)
+            let pos1 = 0, pos2 = 0, next, initial
+            if(this.$Target.getAttribute('data-player') === '1'){
+                pos1 = this.$Y + 1
+                pos2 = this.$Y + 2
+                initial = 1
+            }else{
+                pos1 = this.$Y - 1
+                pos2 = this.$Y - 2
+                initial = 6
+            }
 
-            let arrNext = []
-            arrNext.push(this.$X, nextY)
-            !next.childNodes.length ? this.setOption(arrNext) : null
-
-            if(this.$X !== 0){
-                const nextCheckAttach1 = this.$table.children.item(nextY).children.item(this.$X - 1)
-                if(nextCheckAttach1.childNodes.length){
-                    let checkAttack = []
-                    checkAttack.push([parseInt(this.$X - 1), nextY])
-                    this.checkAttack(checkAttack)
+            next = this.$table.childNodes.item(pos1).childNodes.item(this.$X)
+            if(!next.childNodes.length){
+                this.setOption([this.$X, pos1])
+                //double movement
+                if(this.$Y === initial){
+                    next = this.$table.childNodes.item(pos2).childNodes.item(this.$X)
+                    if(!next.childNodes.length){
+                        this.setOption([this.$X, pos2])
+                    }
                 }
             }
+            //check attack
             if(this.$X !== 7){
-                const nextCheckAttach2 = this.$table.children.item(nextY).children.item(this.$X + 1)
+                const nextCheckAttach2 = this.$table.children.item(pos1).children.item(this.$X + 1)
                 if(nextCheckAttach2.childNodes.length){
                     let checkAttack = []
-                    checkAttack.push([parseInt(this.$X + 1), nextY])
+                    checkAttack.push([parseInt(this.$X + 1), pos1])
+                    this.checkAttack(checkAttack)
+                }else{
+
+                }
+            }
+            if(this.$X !== 0){
+                const nextCheckAttach1 = this.$table.children.item(pos1).children.item(this.$X - 1)
+                if(nextCheckAttach1.childNodes.length){
+                    let checkAttack = []
+                    checkAttack.push([parseInt(this.$X - 1), pos1])
                     this.checkAttack(checkAttack)
                 }
             }
