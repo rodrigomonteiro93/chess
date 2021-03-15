@@ -187,8 +187,16 @@ echo '</div>';
                 case 'queen':
                     move = await this.moveQueen()
                     break
+                case 'horse':
+                    move = await this.moveHorse()
+                    break
             }
             return move
+        }
+
+        async moveHorse() {
+            await this.setMovementL()
+            return this.arrayOptions
         }
 
         async moveBishop() {
@@ -207,6 +215,117 @@ echo '</div>';
             await this.setMovementY()
             await this.setMovementX()
             return this.arrayOptions
+        }
+
+        setMovementL() {
+            this.$directions.l.pos1 = []
+            this.$directions.l.pos2 = []
+            this.$directions.l.pos3 = []
+            this.$directions.l.pos4 = []
+            let item
+            //top
+            this.$table.childNodes.forEach((itemY, index) => {
+                if(index === this.$Y - 2){
+                    let item = itemY.childNodes.item(this.$X - 1)
+                    if(item && this.$X > 0){
+                        if(item.childNodes.length){
+                            let arrTopLef = []
+                            arrTopLef.push([this.$X - 1, this.$Y - 2])
+                            this.checkAttack(arrTopLef)
+                        }else{
+                            this.setOption([this.$X - 1, this.$Y - 2])
+                        }
+                    }
+                    item = itemY.childNodes.item(this.$X + 1)
+                    if(item && this.$X < 7){
+                        if(item.childNodes.length){
+                            let arrTopRig = []
+                            arrTopRig.push([this.$X + 1, this.$Y - 2])
+                            this.checkAttack(arrTopRig)
+                        }else{
+                            this.setOption([this.$X + 1, this.$Y - 2])
+                        }
+                    }
+                }
+
+                //line
+                if(index === this.$Y){
+                    //left
+                    console.log(this.$X)
+                    if(this.$X > 1){
+                        if(this.$Y > 0){
+                            item = this.$table.childNodes.item(index - 1).childNodes.item(this.$X - 2)
+                            if(item.childNodes.length){
+                                let arrLefTop = []
+                                arrLefTop.push([this.$X - 2, index - 1])
+                                this.checkAttack(arrLefTop)
+                            }else{
+                                this.setOption([this.$X - 2, index - 1])
+                            }
+                        }
+                        if(this.$Y < 7) {
+                            item = this.$table.childNodes.item(index + 1).childNodes.item(this.$X - 2)
+                            if (item.childNodes.length) {
+                                let arrLefBot = []
+                                arrLefBot.push([this.$X - 2, index + 1])
+                                this.checkAttack(arrLefBot)
+                            } else {
+                                this.setOption([this.$X - 2, index + 1])
+                            }
+                        }
+                    }
+                    //right
+                    if(this.$X < 6){
+                        if(this.$Y > 0){
+                            item = this.$table.childNodes.item(index - 1).childNodes.item(this.$X + 2)
+                            if(item.childNodes.length){
+                                let arrLefTop = []
+                                arrLefTop.push([this.$X + 2, index - 1])
+                                this.checkAttack(arrLefTop)
+                            }else{
+                                this.setOption([this.$X + 2, index - 1])
+                            }
+                        }
+                        if(this.$Y < 7) {
+                            item = this.$table.childNodes.item(index + 1).childNodes.item(this.$X + 2)
+                            console.log(item, 'aa')
+                            if (item.childNodes.length) {
+                                let arrLefBot = []
+                                arrLefBot.push([this.$X + 2, index + 1])
+                                this.checkAttack(arrLefBot)
+                            } else {
+                                this.setOption([this.$X + 2, index + 1])
+                            }
+                        }
+                    }
+                }
+
+                //bottom
+                if(index === this.$Y + 2){
+                    let item = itemY.childNodes.item(this.$X - 1)
+                    if(item && this.$X > 0){
+                        if(item.childNodes.length){
+                            let arrBotLef = []
+                            arrBotLef.push([this.$X - 1, this.$Y + 2])
+                            this.checkAttack(arrBotLef)
+                        }else{
+                            this.setOption([this.$X - 1, this.$Y + 2])
+                        }
+                    }
+                    item = itemY.childNodes.item(this.$X + 1)
+                    if(item && this.$X < 7){
+                        if(item.childNodes.length){
+                            let arrBotRig = []
+                            arrBotRig.push([this.$X + 1, this.$Y + 2])
+                            this.checkAttack(arrBotRig)
+                        }else{
+                            this.setOption([this.$X + 1, this.$Y + 2])
+                        }
+                    }
+                }
+
+            })
+
         }
 
         setMovementZ() {
@@ -396,7 +515,7 @@ echo '</div>';
 
         movePawn() {
             if(this.$Y === 0 || this.$Y === 7){ return false }
-            let pos1 = 0, pos2 = 0, next, initial
+            let pos1, pos2, next, initial
             if(this.$Target.getAttribute('data-player') === '1'){
                 pos1 = this.$Y + 1
                 pos2 = this.$Y + 2
@@ -497,7 +616,13 @@ echo '</div>';
                         'val' : 0,
                         'max' : []
                     }
-                }
+                },
+                'l' : {
+                    'pos1' : [],
+                    'pos2' : [],
+                    'pos3' : [],
+                    'pos4' : []
+                },
             }
         }
 
