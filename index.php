@@ -190,8 +190,18 @@ echo '</div>';
                 case 'horse':
                     move = await this.moveHorse()
                     break
+                case 'king':
+                    move = await this.moveKing()
+                    break
             }
             return move
+        }
+
+        async moveKing() {
+            await this.setMovementX(true)
+            await this.setMovementY(true)
+            await this.setMovementZ(true)
+            return this.arrayOptions
         }
 
         async moveHorse() {
@@ -247,7 +257,6 @@ echo '</div>';
                         }
                     }
                 }
-
                 //line
                 if(index === this.$Y){
                     //left
@@ -299,7 +308,6 @@ echo '</div>';
                         }
                     }
                 }
-
                 //bottom
                 if(index === this.$Y + 2){
                     let item = itemY.childNodes.item(this.$X - 1)
@@ -323,12 +331,11 @@ echo '</div>';
                         }
                     }
                 }
-
             })
-
+            return this.arrayOptions
         }
 
-        setMovementZ() {
+        setMovementZ(limit) {
             this.$directions.z.pos1.val = this.$X
             this.$directions.z.pos1.max = []
             this.$directions.z.pos2.val = this.$X
@@ -344,6 +351,7 @@ echo '</div>';
                 if(this.$directions.z.pos1.val > 0 && !this.$directions.z.pos1.max.length){
                     this.$directions.z.pos1.val =  parseInt(this.$directions.z.pos1.val) - 1
                     const pos1 = item.childNodes.item(this.$directions.z.pos1.val)
+
                     if(pos1.childNodes.length){
                         this.$directions.z.pos1.max.push([this.$directions.z.pos1.val, $i])
                         this.checkAttack(this.$directions.z.pos1.max)
@@ -364,6 +372,9 @@ echo '</div>';
                     }else{
                         this.setOption([this.$directions.z.pos2.val, $i])
                     }
+                }
+                if(limit && $i < this.$Y){
+                    $i = 0
                 }
             }
             for(let $i=(this.$Y+1);$i<=7;$i++){
@@ -393,22 +404,29 @@ echo '</div>';
                         this.setOption([this.$directions.z.pos4.val, $i])
                     }
                 }
-            
+                if(limit && $i > this.$Y){
+                    $i = 7
+                }
             }
             return this.arrayOptions
         }
 
-        setMovementX() {
+        setMovementX(limit) {
             this.$directions.x.max = []
             this.$directions.x.min = []
             //search min e max
             this.$table.childNodes.item(this.$Y).childNodes.forEach((itemX, index) => {
                 let positions = this.getPositions(itemX)
-                if(itemX.childNodes.length && index < this.$X){
-                    this.$directions.x.min = [positions[0], positions[1]]
-                }
-                if(itemX.childNodes.length && positions[0] > this.$X){
-                    !this.$directions.x.max.length ? this.$directions.x.max = [positions[0], positions[1]] : null
+                if(limit){
+                    this.$directions.x.min = [(this.$X > 0) ? this.$X - 1 : this.$X, positions[1]];
+                    this.$directions.x.max = [(this.$X < 7) ? this.$X + 1 : this.$X, positions[1]];
+                }else{
+                    if(itemX.childNodes.length && index < this.$X){
+                        this.$directions.x.min = [positions[0], positions[1]]
+                    }
+                    if(itemX.childNodes.length && positions[0] > this.$X){
+                        !this.$directions.x.max.length ? this.$directions.x.max = [positions[0], positions[1]] : null
+                    }
                 }
             })
             //set default
@@ -452,22 +470,35 @@ echo '</div>';
             })
         }
 
-        setMovementY(){
+        setMovementY(limit){
             this.$directions.y.max = []
             this.$directions.y.min = []
             //search min e max
             this.$table.childNodes.forEach((itemY, index) => {
                 let y = itemY.childNodes.item(this.$X)
                 let positions = this.getPositions(y)
-                if(y.childNodes.length && positions[1] < this.$Y){
-                    if(this.$PlayerActive === 1){
-                        this.$directions.y.min = [positions[0], positions[1]]
+                if(limit){
+                    if(this.$table.childNodes.item(this.$Y - 1)){
+                        this.$directions.y.min = [this.$X, this.$Y - 1];
                     }else{
-                        this.$directions.y.min = [positions[0], positions[1]]
+                        this.$directions.y.min = [this.$X, this.$Y];
                     }
-                }
-                if(y.childNodes.length && positions[1] > this.$Y){
-                    !this.$directions.y.max.length ? this.$directions.y.max = [positions[0], positions[1]] : null
+                    if(this.$table.childNodes.item(this.$Y + 1)){
+                        this.$directions.y.max = [this.$X, this.$Y + 1];
+                    }else{
+                        this.$directions.y.max = [this.$X, this.$Y];
+                    }
+                }else{
+                    if(y.childNodes.length && positions[1] < this.$Y){
+                        if(this.$PlayerActive === 1){
+                            this.$directions.y.min = [positions[0], positions[1]]
+                        }else{
+                            this.$directions.y.min = [positions[0], positions[1]]
+                        }
+                    }
+                    if(y.childNodes.length && positions[1] > this.$Y){
+                        !this.$directions.y.max.length ? this.$directions.y.max = [positions[0], positions[1]] : null
+                    }
                 }
             })
             //set default
