@@ -84,3 +84,66 @@ body{
     color: white;
     font-size: 5vh;
 }
+.list-pieces{
+    margin-left: 20px;
+    width: 25vw;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.list-pieces ul{
+    display: none;
+    flex-wrap: wrap;
+    list-style: none;
+    align-content: start;
+}
+.list-pieces ul.show{
+    display: flex;
+}
+.list-pieces ul li{
+    flex: 1;
+    min-width: 25%;
+    height: 12vh;
+    position: relative;
+    overflow: hidden;
+}
+.list-pieces ul li::before{
+    content: "\f00d";
+    color: red;
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    font-size: 10vw;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: .6;
+}
+.list-pieces ul li i{
+    font-style: normal;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    font-size: 4vh;
+}
+.list-pieces .list-pieces-1{
+    border: 1px solid white;
+}
+.list-pieces .list-pieces-1 li{
+    background: #32190a;
+    color: white!important;
+    border: 1px solid white;
+}
+.list-pieces .list-pieces-2{
+    border: 1px solid #32190a;
+}
+.list-pieces .list-pieces-2 li{
+    color: #32190a!important;
+    background: #cecfca;
+    border: 1px solid #32190a;
+}
