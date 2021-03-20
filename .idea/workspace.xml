@@ -20,11 +20,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6b44ab16-66a1-4c87-a9b4-b04ff8d21e7f" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/chess.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/features.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pieces.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/index.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chess.js" beforeDir="false" afterPath="$PROJECT_DIR$/chess.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/features.js" beforeDir="false" afterPath="$PROJECT_DIR$/features.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/style.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -65,6 +64,16 @@
       <recent name="C:\projetos\course\chess" />
     </key>
   </component>
+  <component name="RunManager">
+    <configuration name="index.html" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/chess/index.html" useBuiltInWebServerPort="true">
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JavaScript Debug.index.html" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -75,7 +84,8 @@
       <updated>1615582020396</updated>
       <workItem from="1615582021453" duration="78649000" />
       <workItem from="1615806995589" duration="23000" />
-      <workItem from="1615930810696" duration="17669000" />
+      <workItem from="1615930810696" duration="18310000" />
+      <workItem from="1616193049918" duration="5664000" />
     </task>
     <servers />
   </component>
@@ -95,6 +105,7 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
     <state x="616" y="240" key="run.anything.popup" timestamp="1615660085933">

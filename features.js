@@ -1,6 +1,7 @@
 class Features {
 
-    constructor() {
+    constructor(testing) {
+        this.$testing = testing
     }
 
     addPieceRemoved(piece, player){
@@ -27,5 +28,14 @@ class Features {
         }
     }
 
+    toast(msg){
+        const toast = document.querySelector('.toast')
+        if(toast){ toast.remove() }
+        const toastElement = document.createElement('span')
+        toastElement.classList.add('toast')
+        toastElement.textContent = msg
+        const body = document.querySelector('body')
+        body.append(toastElement)
+    }
 }
 

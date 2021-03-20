@@ -1,14 +1,15 @@
 (async function (){
-    class Chess {
+    class Chess extends Features{
 
-        constructor() {
+        constructor(testing) {
+            super(testing);
             this.$Y = false
             this.$X = false
             this.arrayOptions = []
             this.$PlayerActive = Math.floor(Math.random() * 2 + 1)
             this.$Target = false
             this.$winner = false
-            this.$testing = false
+            this.$testing = testing
             this.$table = document.querySelector('.table')
             this.$directions = this.createDirection()
             this.createTable()
@@ -23,6 +24,8 @@
             this.$table.append(await this.getEmpty());
             this.$table.append(await this.getPawn(2));
             this.$table.append(...await this.getPieces(2));
+
+            this.toast(this.$PlayerActive)
         }
 
         async bindShowMovement(e) {
@@ -61,6 +64,7 @@
                 this.$Target.addEventListener('click', this.bindShowMovement.bind(this))
                 this.$PlayerActive = (this.$PlayerActive) === 1 ? 2 : 1
                 this.clearActives()
+                this.toast(this.$PlayerActive)
             }
         }
 
@@ -607,8 +611,7 @@
 
         checkPiece(e){
             if(e.childNodes.length){
-                let features = new Features()
-                features.addPieceRemoved(e.children.item(0).getAttribute('data-piece'), this.$PlayerActive)
+                this.addPieceRemoved(e.children.item(0).getAttribute('data-piece'), this.$PlayerActive)
             }
             return (e.childNodes.length && e.children.item(0).getAttribute('data-piece') === 'king')
         }
@@ -625,5 +628,6 @@
     }
 
 //initial
-    new Chess()
+    const testing = false
+    new Chess(testing)
 }())
